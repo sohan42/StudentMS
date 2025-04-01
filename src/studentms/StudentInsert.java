@@ -6,6 +6,8 @@ package studentms;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import javax.swing.*;
 import java.sql.*;
 /**
@@ -113,6 +115,56 @@ public class StudentInsert extends JFrame{
         operation.setBounds(210, 310, 100, 25);
         jp.add(operation);
         
+        display.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                dispose();
+                View v = new View();
+                v.loadData();
+            }
+        });
+        
+        submit.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e) {
+               submitPerformed(e);
+            }
+        });
+        
+        operation.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                dispose();
+                Operation op = new Operation();
+                op.init();
+            }
+        });
         setVisible(true);
+    }
+    
+    void submitPerformed(ActionEvent e){
+        try {
+            String na,ad,g,ph,em;
+            int roll;
+            st = c.createStatement();
+            if(("".equals(tRo.getText()))&&("".equals(tNa.getText()))&&("".equals(tAd.getText()))&&("".equals(tPh.getText()))&&("".equals(tEm.getText()))){
+                JOptionPane.showMessageDialog(new JFrame(), "Fill all the details","Dialog",JOptionPane.ERROR_MESSAGE);
+            }
+            else{
+                na = tNa.getText();
+                ad = tAd.getText();
+                g = (String)cGe.getSelectedItem();
+                ph = tPh.getText();
+                em = tEm.getText();
+                roll = Integer.parseInt(tRo.getText());
+                
+                String query = "INSERT INTO student (sroll,sname,saddress,sgender,sphone,semail) VALUES ('"+roll+"','"+na+"','"+ad+"','"+g+"','"+ph+"','"+em+"')";
+                
+                st.executeUpdate(query);
+                JOptionPane.showMessageDialog(rootPane,"Successfully Registered!","Dialog",JOptionPane.OK_OPTION);
+            }
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(null, ex);
+        }
     }
 }
