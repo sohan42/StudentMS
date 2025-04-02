@@ -20,12 +20,9 @@ class MyFrame extends JFrame{
 
 public class Main {
     public static void main(String[] args) {
-//        MyFrame m = new MyFrame();
-//        m.load();
-//        Components c = new Components(m); 
-        StudentInsert si = new StudentInsert();
-        si.init();
-        si.components();
+        MyFrame m = new MyFrame();
+        m.load();
+        Components c = new Components(m); 
     }
     
 }

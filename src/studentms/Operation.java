@@ -6,6 +6,8 @@ package studentms;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import javax.swing.*;
 import java.sql.*;
 /**
@@ -130,6 +132,148 @@ public class Operation extends JFrame{
         back.setBounds(240,500,80,30);
         p.add(back);
         
+        sBtn.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                searchPerformed();
+            }
+        });
+        
+        update.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                updatePerformed();
+            }
+        
+        });
+        
+        back.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                dispose();
+                StudentInsert si = new StudentInsert();
+                si.init();
+                si.components();
+            }
+        });
+        
+        delete.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                deletePerformed();
+            }
+        });
         setVisible(true);
     }
+    
+    void deletePerformed(){
+        String id, sql, sql2;
+        int flag = 0, r;
+        r = JOptionPane.showConfirmDialog(this, "Are You Sure!");
+        if(r==0){
+            try {
+                st = c.createStatement();
+                id = search.getText();
+                if("".equals(id)){
+                    JOptionPane.showMessageDialog(new JFrame(),"Enter Id!", "Dialog",JOptionPane.ERROR_MESSAGE);
+                }
+                else{
+                    sql = "SELECT *FROM student WHERE sid = ?";
+                    PreparedStatement ps = c.prepareStatement(sql);
+                    ps.setString(1, id);
+                    ResultSet rs = ps.executeQuery();
+                    while(rs.next()){
+                        sql2 = "DELETE FROM student WHERE sid="+id;
+                        st.executeUpdate(sql2);
+                        search.setText("");
+                        tRo.setText("");
+                        tNa.setText("");
+                        tAd.setText("");
+                        tPh.setText("");
+                        tEm.setText("");
+                        flag=1;
+                    }
+                }
+                if(flag == 0){
+                   JOptionPane.showMessageDialog(new JFrame(),"Id not found!","Dialog",JOptionPane.ERROR_MESSAGE);
+                }
+            } catch (SQLException ex) {
+                JOptionPane.showMessageDialog(null, ex);
+            }
+        }
+    } 
+    
+    void updatePerformed(){
+        String id,ro,na,ad,ge,ph,em;
+        int flag = 0;
+        
+        try {
+            st=c.createStatement();
+            id = search.getText();
+            ro = tRo.getText();
+            na = tNa.getText();
+            ad = tAd.getText();
+            ge = (String)cGe.getSelectedItem();
+            ph = tPh.getText();
+            em = tEm.getText();
+            
+            String sql = "UPDATE student SET sroll = ?, sname = ?, saddress = ?, sgender = ?,sphone = ?, semail = ? WHERE sid = ?";
+            PreparedStatement ps = c.prepareStatement(sql);
+            ps.setString(1, ro);
+            ps.setString(2, na);
+            ps.setString(3, ad);
+            ps.setString(4, ge);
+            ps.setString(5, ph);
+            ps.setString(6, em);
+            ps.setString(7, id);
+            
+            flag = ps.executeUpdate();
+            if(flag>0){
+                JOptionPane.showMessageDialog(new JFrame(),"Data Successfully Updated!");
+            }
+            else{
+                JOptionPane.showMessageDialog(new JFrame(),"No data found for the given ID!");
+            }
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(null, ex);
+        }
+    }
+    
+    void searchPerformed(){
+        String id;
+        int  flag = 0;
+        try {
+            st = c.createStatement();
+            id = search.getText();
+            
+            if("".equals(id)){
+                JOptionPane.showMessageDialog(new JFrame(),"Enter id!","Dialog",JOptionPane.ERROR_MESSAGE);
+            }
+            else{
+                String sql = "SELECT *FROM student WHERE sid = "+id;
+                ResultSet rs =st.executeQuery(sql);
+                while(rs.next()){
+                    tRo.setText(rs.getString("sroll"));
+                    tNa.setText(rs.getString("sname"));
+                    tAd.setText(rs.getString("saddress"));
+                    cGe.setSelectedItem(rs.getString("sgender"));
+                    tPh.setText(rs.getString("sphone"));
+                    tEm.setText(rs.getString("semail"));
+                    flag = 1;
+                }
+                if(flag == 0){
+                   JOptionPane.showMessageDialog(new JFrame(),"Id not found!","Dialog",JOptionPane.ERROR_MESSAGE); 
+                    tRo.setText("");
+                    tNa.setText("");
+                    tAd.setText("");
+                    tPh.setText("");
+                    tEm.setText("");
+                }
+            }
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(null, ex);
+        }
+    }
+    
+    
 }

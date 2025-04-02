@@ -85,6 +85,8 @@ public class Components {
                 JOptionPane.showMessageDialog(null, "Login Successfull!");
                 m.dispose();
                 StudentInsert si = new StudentInsert();
+                si.init();
+                si.components();
             }
             else{
                 JOptionPane.showMessageDialog(null, "Enter Valid Username/Password");
